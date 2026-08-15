@@ -1,0 +1,9 @@
+# stale snapshot of the app, kept on disk for reference only
+grocery-pwa/
+grocery-pwa.zip
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/

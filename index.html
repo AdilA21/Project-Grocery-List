@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grocery List</title>
+<meta name="description" content="A reusable grocery checklist organized by store.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1F5138" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141613" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Grocery">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app">
+
+  <header class="head">
+    <div class="head-top">
+      <div>
+        <div class="eyebrow">Grocery list</div>
+        <h1 id="listName">Staples</h1>
+      </div>
+      <div class="head-btns">
+        <button id="allBtn" class="icon-btn" aria-label="Show every store" aria-pressed="false">
+          <svg class="stroked" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+        </button>
+        <button id="menuBtn" class="icon-btn" aria-label="Open menu" aria-haspopup="true" aria-expanded="false">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="tally" id="tally">18 to get</div>
+  </header>
+
+  <nav class="tabs" id="tabs" aria-label="Stores"></nav>
+
+  <main class="sheet">
+    <ul class="items" id="items"></ul>
+    <p class="empty" id="empty" hidden>Nothing on this list yet. Add your first item below.</p>
+  </main>
+
+  <div class="compose">
+    <input id="newItem" type="text" placeholder="Add an item" autocomplete="off" autocapitalize="sentences" enterkeyhint="done" aria-label="New item">
+    <button id="addBtn" class="btn-primary">Add</button>
+  </div>
+
+  <div class="foot">
+    <button id="resetBtn" class="btn-ghost">Start new trip</button>
+    <button id="editBtn" class="btn-ghost" aria-pressed="false">Edit list</button>
+  </div>
+
+  <p class="offline-note" id="swNote" hidden>Saved for offline use.</p>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+
+<div class="menu" id="menu" role="dialog" aria-label="Menu" hidden>
+  <button class="menu-item" data-act="addStore">Add a store</button>
+  <button class="menu-item" data-act="renameStore">Rename this store</button>
+  <button class="menu-item" data-act="deleteStore">Delete this store</button>
+  <hr>
+  <button class="menu-item" data-act="resetAll">Uncheck every list</button>
+  <button class="menu-item" data-act="toggleSink"><span>Move picked items down</span><span class="pill" id="sinkState">On</span></button>
+  <hr>
+  <button class="menu-item" data-act="export">Back up to a file</button>
+  <button class="menu-item" data-act="import">Restore from a file</button>
+  <hr>
+  <button class="menu-item" data-act="close">Close</button>
+</div>
+
+<input type="file" id="fileInput" accept="application/json,.json" hidden>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>
