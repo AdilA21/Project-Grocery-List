@@ -19,31 +19,33 @@
 
 <div class="app">
 
-  <!-- home, the list of users -->
-  <section class="screen" id="home" hidden>
-    <header class="head">
-      <div class="head-top">
-        <div class="head-title">
-          <div class="eyebrow">Grocery</div>
-          <h1>Who is shopping?</h1>
-        </div>
-        <div class="head-btns">
-          <button id="userEditBtn" class="icon-btn" aria-label="Edit users" aria-pressed="false">
-            <svg class="stroked" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 20h4l10-10a2.8 2.8 0 0 0-4-4L4 16v4z"/></svg>
-          </button>
-        </div>
+  <!-- home, where you pick who is shopping -->
+  <section class="screen home-screen" id="home" hidden>
+    <div class="home-inner">
+      <div class="home-head">
+        <div class="eyebrow">Grocery</div>
+        <h1>Who is shopping?</h1>
+        <div class="tally" id="homeTally"></div>
       </div>
-      <div class="tally" id="homeTally"></div>
-    </header>
 
-    <main class="sheet">
-      <ul class="items" id="users"></ul>
-      <p class="empty" id="usersEmpty" hidden>No one here yet. Add the first person below.</p>
-    </main>
+      <div class="select-wrap">
+        <button class="select" id="userSelect" aria-haspopup="listbox" aria-expanded="false">
+          <span class="avatar" id="selAvatar" aria-hidden="true">C</span>
+          <span class="select-text">
+            <span class="select-name" id="selName">Custom</span>
+            <span class="sub" id="selSub"></span>
+          </span>
+          <svg class="chev stroked" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <ul class="select-list" id="userList" role="listbox" aria-label="People" hidden></ul>
+      </div>
 
-    <div class="compose">
-      <input id="newUser" type="text" placeholder="Add a person" autocomplete="off" autocapitalize="words" enterkeyhint="done" aria-label="New person">
-      <button id="addUserBtn" class="btn-primary">Add</button>
+      <div class="compose home-compose">
+        <input id="newUser" type="text" placeholder="Add a person" autocomplete="off" autocapitalize="words" enterkeyhint="done" aria-label="New person">
+        <button id="addUserBtn" class="btn-primary">Add</button>
+      </div>
+
+      <button id="userEditBtn" class="btn-ghost home-edit" aria-pressed="false">Edit people</button>
     </div>
   </section>
 

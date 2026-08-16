@@ -239,7 +239,9 @@
 
   var upgraded = false;
   var state = load();
-  var view = "list";
+  /* the app always opens on the picker, so a shared phone never lands in
+     somebody else's list */
+  var view = "home";
   var editing = false;
   var editingUsers = false;
   var combined = false;
@@ -326,8 +328,11 @@
   var el = {
     home: document.getElementById("home"),
     listView: document.getElementById("listView"),
-    users: document.getElementById("users"),
-    usersEmpty: document.getElementById("usersEmpty"),
+    userSelect: document.getElementById("userSelect"),
+    userList: document.getElementById("userList"),
+    selAvatar: document.getElementById("selAvatar"),
+    selName: document.getElementById("selName"),
+    selSub: document.getElementById("selSub"),
     homeTally: document.getElementById("homeTally"),
     newUser: document.getElementById("newUser"),
     addUserBtn: document.getElementById("addUserBtn"),
@@ -362,6 +367,7 @@
 
   function render() {
     var list = view === "list" ? activeList() : null;
+    document.body.classList.toggle("home-view", view === "home");
     document.body.classList.toggle("combined-view", view === "list" && combined);
     document.body.classList.toggle("no-store", view === "list" && !list);
     el.home.hidden = view !== "home";
@@ -372,22 +378,34 @@
     renderList(list);
   }
 
+  function initial(name) {
+    return name.trim().slice(0, 1).toUpperCase() || "?";
+  }
+
   function renderHome() {
+    var current = activeUser();
+
     el.homeTally.textContent =
       state.users.length + (state.users.length === 1 ? " person" : " people");
 
-    el.users.textContent = "";
-    el.users.className = "items" + (editingUsers ? " editing" : "");
-    el.usersEmpty.hidden = state.users.length > 0;
+    el.selAvatar.textContent = initial(current.name);
+    el.selName.textContent = current.name;
+    el.selSub.textContent = summary(current);
 
-    state.users.forEach(function (u, index) {
+    el.userList.textContent = "";
+    el.userList.className = "select-list" + (editingUsers ? " editing" : "");
+
+    state.users.forEach(function (u) {
+      var picked = u.id === state.activeUserId;
       var li = document.createElement("li");
-      li.className = "row user-row" + (u.id === state.activeUserId ? " current" : "");
+      li.className = "opt" + (picked ? " on" : "");
+      li.setAttribute("role", "option");
+      li.setAttribute("aria-selected", picked ? "true" : "false");
 
       var avatar = document.createElement("span");
       avatar.className = "avatar";
       avatar.setAttribute("aria-hidden", "true");
-      avatar.textContent = u.name.trim().slice(0, 1).toUpperCase() || "?";
+      avatar.textContent = initial(u.name);
       li.appendChild(avatar);
 
       var label = document.createElement("span");
@@ -399,12 +417,9 @@
       sub.className = "sub";
       sub.textContent = summary(u);
       label.appendChild(sub);
-      if (editingUsers) {
-        label.addEventListener("click", function () { renameUser(u.id); });
-      } else {
-        label.addEventListener("click", function () { openUser(u.id); });
-        avatar.addEventListener("click", function () { openUser(u.id); });
-      }
+      label.addEventListener("click", function () {
+        if (editingUsers) renameUser(u.id); else openUser(u.id);
+      });
       li.appendChild(label);
 
       var tools = document.createElement("span");
@@ -419,8 +434,13 @@
       tools.appendChild(del);
       li.appendChild(tools);
 
-      el.users.appendChild(li);
+      el.userList.appendChild(li);
     });
+  }
+
+  function setSelectOpen(on) {
+    el.userList.hidden = !on;
+    el.userSelect.setAttribute("aria-expanded", on ? "true" : "false");
   }
 
   function summary(user) {
@@ -636,6 +656,7 @@
   function openUser(id) {
     state.activeUserId = id;
     view = "list";
+    setSelectOpen(false);
     setCombined(false);
     setEditing(false);
     save();
@@ -661,6 +682,7 @@
     });
     el.newUser.value = "";
     save();
+    setSelectOpen(true);
     render();
     el.newUser.focus();
   }
@@ -997,8 +1019,7 @@
   function setEditingUsers(on) {
     editingUsers = on;
     el.userEditBtn.setAttribute("aria-pressed", editingUsers ? "true" : "false");
-    el.userEditBtn.setAttribute("aria-label",
-      editingUsers ? "Done editing people" : "Edit people");
+    el.userEditBtn.textContent = editingUsers ? "Done editing" : "Edit people";
   }
 
   function setCombined(on) {
@@ -1025,12 +1046,27 @@
   el.backBtn.addEventListener("click", function () {
     view = "home";
     setEditingUsers(false);
+    setSelectOpen(false);
     render();
   });
 
+  el.userSelect.addEventListener("click", function () {
+    setSelectOpen(el.userList.hidden);
+  });
+
+  /* editing is only visible with the list open, so open it */
   el.userEditBtn.addEventListener("click", function () {
     setEditingUsers(!editingUsers);
+    if (editingUsers) setSelectOpen(true);
     render();
+  });
+
+  /* the edit button opens the list on the same click that bubbles up here,
+     so it has to be exempt or it would close again straight away */
+  document.addEventListener("click", function (e) {
+    if (el.userList.hidden) return;
+    if (e.target.closest(".select-wrap, #userEditBtn")) return;
+    setSelectOpen(false);
   });
 
   el.resetBtn.addEventListener("click", resetList);
@@ -1066,6 +1102,7 @@
     if (e.key !== "Escape") return;
     if (!el.picker.hidden) closePicker();
     else if (!el.menu.hidden) closeMenu();
+    else if (!el.userList.hidden) setSelectOpen(false);
   });
 
   el.fileInput.addEventListener("change", function () {

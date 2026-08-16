@@ -77,10 +77,13 @@ stored data is missing or malformed.
 
 ## Current features
 
-- Home screen listing everyone who shops, each with their own stores and items.
-  Tap a person to open their lists, the back arrow returns. Add, rename, and
-  delete people. The app opens on whoever was last used, so a shopping trip
-  never starts with an extra tap.
+- Home screen where you pick who is shopping, each person with their own stores
+  and items. It is the landing screen every launch, so a shared phone never
+  opens straight into somebody else's list. The picker is a dropdown holding the
+  last person used, centred over a soft gradient of the app greens. Tap a person
+  to open their lists, the back arrow returns. Add people below the dropdown,
+  rename and delete them through Edit people, which opens the list to reach
+  them.
 - An icon per item, picked from an emoji sheet in edit mode. Icons live in one
   shared map keyed by item name, so Milk looks the same for everyone. Items
   with no pick fall back to a built in table, which covers most of the seeded
@@ -120,6 +123,11 @@ that reads the old shape and upgrades it. Do not silently reset to `SEED`.
 Tap targets stay at 44px minimum. Font size on inputs stays at 16px or larger,
 because anything smaller makes iOS Safari zoom on focus. Input styling is keyed
 off `.compose input` rather than an id, so a new input cannot miss the rule.
+
+**Outline icons need `class="stroked"` and nothing narrower.** The rule is a
+bare `svg.stroked`, not scoped to a parent. An SVG built from `polyline` or
+`path` with no fill override renders as a solid blob instead of a line, which is
+how the dropdown chevron first shipped as a filled triangle.
 
 **Any rule that sets `display` beats the `hidden` attribute.** The browser's own
 `[hidden] { display: none }` loses to a class, which once left an empty toast
