@@ -9,129 +9,68 @@ items stay and the checkmarks reset.
 
 ## What it does
 
-- Pick who is shopping on the home screen. Each person keeps their own stores
-  and items.
-- Store tabs across the top, each showing how many items are still to get.
-- Tap a row to check an item off. Checked items sink to the bottom, which can be
-  turned off.
-- Add an item, and if it is already on the list it gets unchecked rather than
-  duplicated.
-- An icon per item, picked from an emoji sheet in edit mode. Icons are shared by
-  everyone, so the same item looks the same for each person. Most common
-  groceries already have one.
-- Edit mode for renaming, reordering, and deleting items.
-- Whole trip view, showing every item still to get across all stores at once,
-  grouped by store. Tapping a row checks it off in its real store list.
-- Start new trip clears the checkmarks on one store. Uncheck every list clears
-  them all.
-- Undo on every destructive action.
-- Add, rename, and delete stores and people.
-- Back up and restore through a JSON file.
+- Keeps a separate set of stores and items for each person who shops
+- Counts what is still to get, per store and across the whole trip
+- Remembers your lists between visits, and works with no signal in the shop
+- Shows an icon beside each item, shared by everyone using the app
+- Moves lists between devices through a backup file
 
-## Stack
+## Using it
 
-Vanilla HTML, CSS, and JavaScript. No framework, no build step, no package
-manager, no dependencies. Open the folder and edit the files.
+**Pick who is shopping.** The app opens on a dropdown holding whoever shopped
+last. Tap it to see everyone, then tap a name to open their stores. Add someone
+new in the field below. Edit people lets you rename or remove them.
 
-## Files
+**Move between stores.** The tabs across the top are your stores, each showing
+how many items are still to get. Tap a tab to switch. Everything is the catch
+all for items you pick up wherever you happen to be.
 
-```
-index.html              app shell and markup
-styles.css              styling, light and dark through prefers-color-scheme
-app.js                  state, rendering, storage, all logic
-manifest.webmanifest    home screen install metadata
-sw.js                   service worker, cache first offline
-icons/                  app icons
-```
+**Check things off.** Tap a row as you put it in the trolley. Checked items drop
+to the bottom of the list, which you can turn off under "Move picked items down"
+in the menu.
 
-## Test locally
+**Add an item.** Type it in the field at the bottom and tap Add. If it is
+already on the list it gets unchecked instead of added twice.
 
-The service worker will not run from `file://`, so serve the folder over HTTP.
+**See the whole trip.** The stacked lines button beside the menu shows every
+item still to get across all stores at once, grouped by store. Tapping a row
+checks it off in the store it belongs to. Rows you check while looking stay on
+screen with a line through them, so nothing disappears under your thumb.
 
-**Terminal**
+**Give items an icon.** Tap Edit list, then the icon button on any row, and pick
+from the sheet. Most common groceries already have one. Icons are shared, so an
+item looks the same for everyone using the app.
 
-```bash
-python -m http.server 8080
-```
+**Tidy the list.** Edit list also lets you rename an item, move it up or down,
+and delete it. Tap Done editing when you are finished.
 
-Use `python3` if `python` is not on your path. Then open
-`http://localhost:8080`.
+**Start the next trip.** Start new trip clears the checkmarks on the store you
+are looking at and keeps the items. Uncheck every list in the menu does the same
+across all of them. Anything you undo by mistake can be put back from the
+message that appears.
 
-**VS Code**
-
-Install the Live Server extension, right click `index.html`, choose "Open with
-Live Server".
-
-**On your phone over local wifi**
-
-Find your machine's local IP, then open `http://THAT_IP:8080` on your phone.
-
-```bash
-ipconfig                      # Windows, look for IPv4 Address
-ipconfig getifaddr en0        # macOS
-hostname -I                   # Linux
-```
-
-The service worker will not register over plain HTTP on a non-localhost address,
-so the app will not go offline this way. Everything else works. Full offline
-behavior needs HTTPS, which GitHub Pages provides.
-
-## Deploy to GitHub Pages
-
-1. Create a repository on GitHub. Public is required for free Pages.
-2. Push this folder to it:
-
-```bash
-git init
-git add .
-git commit -m "Grocery list PWA"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
-git push -u origin main
-```
-
-3. In the repo, open Settings, then Pages.
-4. Under "Build and deployment", set Source to "Deploy from a branch", branch
-   `main`, folder `/ (root)`. Save.
-5. Wait about a minute. The app lands at
-   `https://YOUR_USERNAME.github.io/YOUR_REPO/`.
-
-Relative paths are used throughout, so serving from a repository subpath works
-without changes.
+**Add and remove stores.** The + store tab adds one. Rename and delete live in
+the menu.
 
 ## Install on iPhone
 
-Open the Pages URL in Safari. Chrome and Firefox on iOS cannot install web apps.
-Tap the share button, scroll down, tap "Add to Home Screen". The app then opens
-full screen with no browser chrome.
+Open the site in Safari. Chrome and Firefox on iOS cannot install web apps.
 
-Look for "Saved for offline use." at the bottom of the screen. That is the
-service worker confirming it registered.
+Tap the share button, scroll down, and tap "Add to Home Screen". The app then
+opens full screen with no browser chrome, and works with no signal.
 
-## Updating the app
+"Saved for offline use." at the bottom of the screen confirms it is ready to
+work offline.
 
-After changing any file the app loads, bump the cache name in `sw.js`:
+## Your data
 
-```js
-var CACHE = "grocery-v5";
-```
+Everything stays on the device. Nothing is sent anywhere and there is no
+account.
 
-Raise the number and push. Without that bump, installed phones keep serving the
-old cached files and the change looks like it did nothing.
+Each device keeps its own copy, so two phones do not sync on their own. Use
+"Back up to a file" and "Restore from a file" in the menu to move lists between
+them.
 
-New files also need adding to the `ASSETS` array in `sw.js`, or they will not be
-available offline.
-
-## Notes on data
-
-Everything is stored in `localStorage` on the device, under the key
-`grocery.v1`. Nothing is sent anywhere and there is no account.
-
-Each device keeps its own copy. Two phones do not sync. Use "Back up to a file"
-and "Restore from a file" in the menu to move data between them. Backups from
-older versions of the app still restore, because they are upgraded on the way
-in.
-
-iOS clears `localStorage` for websites after about seven days of no use.
-Installing to the home screen makes this much less likely, but back up
-occasionally if the list matters.
+iOS clears saved data for websites after about seven days of no use. Installing
+to the home screen makes this much less likely, but take a backup occasionally
+if the list matters.
