@@ -1,4 +1,4 @@
-var CACHE = "grocery-v3";
+var CACHE = "grocery-v4";
 
 var ASSETS = [
   "./",

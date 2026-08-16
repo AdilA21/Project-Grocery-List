@@ -33,30 +33,58 @@ README.md               local testing and GitHub Pages deploy steps
 
 ## Data model
 
-Everything lives in `localStorage` under the key `grocery.v1`.
+Everything lives in `localStorage` under the key `grocery.v1`. The key name is
+frozen so live data is never orphaned. The shape inside it carries its own
+`version` and is upgraded by `migrate()`.
 
 ```js
 {
-  version: 1,
-  activeListId: "staples",
+  version: 2,
+  activeUserId: "custom",
   settings: { sinkChecked: true },
-  lists: [
+  icons: { "milk": "🥛" },
+  users: [
     {
-      id: "staples",
-      name: "Staples",
-      items: [ { id: "iabc123", text: "Milk", checked: false } ]
+      id: "custom",
+      name: "Custom",
+      activeListId: "costco",
+      lists: [
+        {
+          id: "costco",
+          name: "Costco",
+          items: [ { id: "iabc123", text: "Milk", checked: false } ]
+        }
+      ]
     }
   ]
 }
 ```
 
-Seeded lists are Staples, Costco, Lotte, Walmart, and Fresh Market. Staples
-holds the recurring items bought most trips regardless of store. The `SEED`
-constant at the top of `app.js` only applies on first run or if stored data is
-missing or malformed.
+Version 1 kept a single `lists` array at the top level. `migrate()` wraps it in
+a user named Custom, keeping every store, item, checked state, and the chosen
+`activeListId`. It runs on load and on restore from a backup file, so old
+backups still work. The upgraded shape is written back immediately rather than
+waiting for the first edit.
+
+`icons` is shared by every user, keyed by the lowercased item name. A name with
+no entry falls back to the `DEFAULT_ICONS` table, which tries the plural both
+ways, dropping one letter for pickles and two for potatoes.
+
+Seeded lists are Costco, Lotte, Walmart, Fresh Market, and Everything.
+Everything holds the recurring items bought most trips regardless of store, so
+it sits last, after the real shops. `SEED_LISTS` only applies on first run or if
+stored data is missing or malformed.
 
 ## Current features
 
+- Home screen listing everyone who shops, each with their own stores and items.
+  Tap a person to open their lists, the back arrow returns. Add, rename, and
+  delete people. The app opens on whoever was last used, so a shopping trip
+  never starts with an extra tap.
+- An icon per item, picked from an emoji sheet in edit mode. Icons live in one
+  shared map keyed by item name, so Milk looks the same for everyone. Items
+  with no pick fall back to a built in table, which covers most of the seeded
+  list out of the box.
 - Store tabs with a count of unchecked items per store
 - Tap a row to check off
 - Checked items sink to the bottom, toggleable in the menu
@@ -90,7 +118,13 @@ that reads the old shape and upgrades it. Do not silently reset to `SEED`.
 
 **Test at 390px wide.** This is used on an iPhone while walking around a store.
 Tap targets stay at 44px minimum. Font size on inputs stays at 16px or larger,
-because anything smaller makes iOS Safari zoom on focus.
+because anything smaller makes iOS Safari zoom on focus. Input styling is keyed
+off `.compose input` rather than an id, so a new input cannot miss the rule.
+
+**Any rule that sets `display` beats the `hidden` attribute.** The browser's own
+`[hidden] { display: none }` loses to a class, which once left an empty toast
+permanently on screen swallowing taps. `styles.css` now forces `[hidden]` with
+`!important`. Leave that rule alone.
 
 **Keep it accessible.** Buttons need `aria-label` when they have no text.
 Interactive elements need visible focus states.

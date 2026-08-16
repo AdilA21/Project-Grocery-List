@@ -19,40 +19,74 @@
 
 <div class="app">
 
-  <header class="head">
-    <div class="head-top">
-      <div>
-        <div class="eyebrow">Grocery list</div>
-        <h1 id="listName">Staples</h1>
+  <!-- home, the list of users -->
+  <section class="screen" id="home" hidden>
+    <header class="head">
+      <div class="head-top">
+        <div class="head-title">
+          <div class="eyebrow">Grocery</div>
+          <h1>Who is shopping?</h1>
+        </div>
+        <div class="head-btns">
+          <button id="userEditBtn" class="icon-btn" aria-label="Edit users" aria-pressed="false">
+            <svg class="stroked" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 20h4l10-10a2.8 2.8 0 0 0-4-4L4 16v4z"/></svg>
+          </button>
+        </div>
       </div>
-      <div class="head-btns">
-        <button id="allBtn" class="icon-btn" aria-label="Show every store" aria-pressed="false">
-          <svg class="stroked" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
-        </button>
-        <button id="menuBtn" class="icon-btn" aria-label="Open menu" aria-haspopup="true" aria-expanded="false">
-          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
-        </button>
-      </div>
+      <div class="tally" id="homeTally"></div>
+    </header>
+
+    <main class="sheet">
+      <ul class="items" id="users"></ul>
+      <p class="empty" id="usersEmpty" hidden>No one here yet. Add the first person below.</p>
+    </main>
+
+    <div class="compose">
+      <input id="newUser" type="text" placeholder="Add a person" autocomplete="off" autocapitalize="words" enterkeyhint="done" aria-label="New person">
+      <button id="addUserBtn" class="btn-primary">Add</button>
     </div>
-    <div class="tally" id="tally">18 to get</div>
-  </header>
+  </section>
 
-  <nav class="tabs" id="tabs" aria-label="Stores"></nav>
+  <!-- one user's stores and items -->
+  <section class="screen" id="listView">
+    <header class="head">
+      <div class="head-top">
+        <button id="backBtn" class="icon-btn back" aria-label="Back to the list of people">
+          <svg class="stroked" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><polyline points="14 5 7 12 14 19"/></svg>
+        </button>
+        <div class="head-title">
+          <div class="eyebrow" id="userName">Custom</div>
+          <h1 id="listName">Everything</h1>
+        </div>
+        <div class="head-btns">
+          <button id="allBtn" class="icon-btn" aria-label="Show every store" aria-pressed="false">
+            <svg class="stroked" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+          </button>
+          <button id="menuBtn" class="icon-btn" aria-label="Open menu" aria-haspopup="true" aria-expanded="false">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="tally" id="tally">18 to get</div>
+    </header>
 
-  <main class="sheet">
-    <ul class="items" id="items"></ul>
-    <p class="empty" id="empty" hidden>Nothing on this list yet. Add your first item below.</p>
-  </main>
+    <nav class="tabs" id="tabs" aria-label="Stores"></nav>
 
-  <div class="compose">
-    <input id="newItem" type="text" placeholder="Add an item" autocomplete="off" autocapitalize="sentences" enterkeyhint="done" aria-label="New item">
-    <button id="addBtn" class="btn-primary">Add</button>
-  </div>
+    <main class="sheet">
+      <ul class="items" id="items"></ul>
+      <p class="empty" id="empty" hidden>Nothing on this list yet. Add your first item below.</p>
+    </main>
 
-  <div class="foot">
-    <button id="resetBtn" class="btn-ghost">Start new trip</button>
-    <button id="editBtn" class="btn-ghost" aria-pressed="false">Edit list</button>
-  </div>
+    <div class="compose">
+      <input id="newItem" type="text" placeholder="Add an item" autocomplete="off" autocapitalize="sentences" enterkeyhint="done" aria-label="New item">
+      <button id="addBtn" class="btn-primary">Add</button>
+    </div>
+
+    <div class="foot">
+      <button id="resetBtn" class="btn-ghost">Start new trip</button>
+      <button id="editBtn" class="btn-ghost" aria-pressed="false">Edit list</button>
+    </div>
+  </section>
 
   <p class="offline-note" id="swNote" hidden>Saved for offline use.</p>
 </div>
@@ -71,6 +105,15 @@
   <button class="menu-item" data-act="import">Restore from a file</button>
   <hr>
   <button class="menu-item" data-act="close">Close</button>
+</div>
+
+<div class="picker" id="picker" role="dialog" aria-label="Choose an icon" hidden>
+  <div class="picker-head">
+    <span id="pickerFor">Icon</span>
+    <button class="btn-ghost" id="pickerClear">No icon</button>
+    <button class="btn-ghost" id="pickerClose">Done</button>
+  </div>
+  <div class="picker-body" id="pickerGrid"></div>
 </div>
 
 <input type="file" id="fileInput" accept="application/json,.json" hidden>
